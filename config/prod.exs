@@ -61,4 +61,13 @@ config :logger, level: :info
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
-import_config "prod.secret.exs"
+
+config :tercle, TercleWeb.Endpoint,
+       secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
+       server: true
+
+config :tercle, Tercle.Repo,
+       adapter: Ecto.Adapters.Postgres,
+       url: System.get_env("DATABASE_URL"),
+       ssl: true,
+       pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections.
